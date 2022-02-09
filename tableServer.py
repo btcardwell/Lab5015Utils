@@ -8,6 +8,8 @@ class SerialServer:
         self.socket = context.socket(zmq.REP)
         self.socket.bind("tcp://*:%d"%port)
         self.instr = serial.Serial(device, 115200, timeout=0)
+        self.xMax = 429
+        self.yMax = 189
 
         # Wake up grbl
         wakeUp = "\r\n\r\n"
@@ -47,8 +49,12 @@ class SerialServer:
                 self.socket.send(reply) #no need to decode and encode
 
             if "go" in msg:
-                self.globalX = float(msg[1])
-                self.globalY = float(msg[2])
+                if float(msg[1]) > self.xMax:
+                    print ("requested x value is too high, setting x to {}".format(self.xMax))
+                if float(msg[2]) > self.yMax:
+                    print("requested y value is too high, setting y to {}".format(self.yMax))
+                self.globalX = min(self.xMax, float(msg[1]))
+                self.globalY = min(self.yMax, float(msg[2]))
                 command = "G90 G0 X"+str(self.globalX)+" Y"+str(self.globalY)+"\n"
                 self.instr.write(command.encode()) # Send g-code block to grbl
                 time.sleep(0.2)

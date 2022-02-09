@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Lab5015_utils import movingTable
+from movingTable import movingTable
 from optparse import OptionParser
 import time
 
@@ -11,7 +11,7 @@ parser.add_option("-y", dest="y", default="0.0")
 (options, args) = parser.parse_args()
 
 myTable = movingTable()
-#print(myTable.unlock())
+print(myTable.unlock())
 
 print("moving to x=",options.x," y=",options.y)
 print(myTable.goToXY(options.x, options.y))
