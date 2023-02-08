@@ -309,6 +309,35 @@ class AgilentE3633A():
 
 
 ##########################
+class Agilent3606A():
+    """Instrument class for Agilent DMM
+    Args:
+    """
+
+    def __init__(self):
+        self.instr = serial.Serial("/dev/ttyACM0", timeout=15)
+
+        self.instr.write(b'SYSTem:REMote\r\n')
+        self.instr.write(b'SYSTem:BEEPer:STATe OFF\r\n')
+        self.instr.readline()
+        self.instr.write(b'*CLS\r\n')
+        self.instr.readline()
+
+
+    def meas_V(self):
+        """measure tension"""
+        cmdString = "MEAS:VOLT?\r\n"
+        self.instr.write(cmdString.encode())
+        volt = self.instr.readline()
+        if volt == '':
+            print("empty string!")
+            return 0.0
+        return float(volt)
+
+
+
+
+##########################
 class sipmPower():
     """class to control the power delivered to SiPMs
 
